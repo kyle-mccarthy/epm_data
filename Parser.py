@@ -1,6 +1,7 @@
 from Session import Session
 from Student import Student
 from os import listdir
+import time
 
 
 class Parser:
@@ -20,7 +21,7 @@ class Parser:
     # the iterate the files in the session folder
     def load(self):
         # iterate folders
-        for s in range(1, self.num_session):
+        for s in range(1, self.num_session+1):
             # iterate files
             for f in listdir(self.path + str(s)):
                 self.parse_file(s, f)
@@ -30,13 +31,30 @@ class Parser:
         file = open(self.path + str(session) + "/" + str(file_name))
         for row in file:
             row = row.split(',')
-            # get the needed variables from the row
+            # get the needed variables from the row and trim the string
             session_id = int(row[0].lstrip().rstrip())
             student_id = int(row[1].lstrip().rstrip())
             exercise = row[2].lstrip().rstrip()
             activity = row[3].lstrip().rstrip()
+
+            # convert the string dates to actual dates
             start_time = row[4].lstrip().rstrip()
             end_time = row[5].lstrip().rstrip()
+
+            # catch the possibility that the data is malformatted
+            try:
+                time.strptime(start_time, "%d.%m.%Y %H:%M:%S")
+            except ValueError:
+                print("error converting str to time for session " + str(session_id) + " in file " + file_name +
+                      " for the date " + start_time)
+
+            # catch the possibility that the data is malformatted
+            try:
+                time.strptime(end_time, "%d.%m.%Y %H:%M:%S")
+            except ValueError:
+                print("error converting str to time for session " + str(session_id) + " in file " + file_name +
+                      " for the date " + end_time)
+
             idle_time = row[6].lstrip().rstrip()
             mouse_wheel = row[7].lstrip().rstrip()
             mouse_wheel_click = row[8].lstrip().rstrip()
