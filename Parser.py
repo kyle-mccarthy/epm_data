@@ -31,7 +31,7 @@ class Parser:
         file = open(self.path + str(session) + "/" + str(file_name))
         for row in file:
             row = row.split(',')
-            # get the needed variables from the row and trim the string
+            # get the needed variables from the row and trim the string and perform type conversions
             session_id = int(row[0].lstrip().rstrip())
             student_id = int(row[1].lstrip().rstrip())
             exercise = row[2].lstrip().rstrip()
