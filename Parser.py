@@ -24,10 +24,10 @@ class Parser:
         for s in range(1, self.num_session+1):
             # iterate files
             for f in listdir(self.path + str(s)):
-                self.parse_file(s, f)
+                self.parse_session_file(s, f)
 
     # parse the file and extract the data needed from it, then create the session and attach it to the correct user
-    def parse_file(self, session, file_name):
+    def parse_session_file(self, session, file_name):
         file = open(self.path + str(session) + "/" + str(file_name))
         for row in file:
             row = row.split(',')
