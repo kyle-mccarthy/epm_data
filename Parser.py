@@ -147,7 +147,11 @@ class Parser:
     def get_mode_session_scores(self):
         session_modes = {}
         for session_id, grades in self.get_list_session_scores().items():
-            session_modes[session_id] = statistics.mode(grades)
+            # the mode function can throw a StatisticsError if there are multiple equally common value
+            try:
+                session_modes[session_id] = statistics.mode(grades)
+            except statistics.StatisticsError as e:
+                print(e)
         return session_modes
 
     # get the standard deviation of the session scores/intermediate grades
@@ -165,3 +169,34 @@ class Parser:
                 exam_scores[exam_id].append(exam.__dict__)
         return exam_scores
 
+    # get the average of the exam scores
+    def get_average_exam_scores(self):
+        exam_averages = {}
+        for exam_id, exam in self.get_list_exam_scores().items():
+            exam_averages[exam_id] = statistics.mean([x['total'] for x in exam])
+        return exam_averages
+
+    # get the median of the exam scores
+    def get_median_exam_scores(self):
+        exam_median = {}
+        for exam_id, exam in self.get_list_exam_scores().items():
+            exam_median[exam_id] = statistics.median([x['total'] for x in exam])
+        return exam_median
+
+    # get the mode of the exam scores
+    def get_mode_exam_scores(self):
+        exam_modes = {}
+        for exam_id, exam in self.get_list_exam_scores().items():
+            # the mode function can throw a StatisticsError if there are multiple equally common value
+            try:
+                exam_modes[exam_id] = statistics.mode([x['total'] for x in exam])
+            except statistics.StatisticsError as e:
+                print(e)
+        return exam_modes
+
+    # get the std deviation of the exam scores
+    def get_std_dev_exam_scores(self):
+        exam_std_dev = {}
+        for exam_id, exam in self.get_list_exam_scores().items():
+            exam_std_dev[exam_id] = statistics.pstdev([x['total'] for x in exam])
+        return exam_std_dev
