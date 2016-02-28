@@ -7,4 +7,4 @@ class Student:
         self.id = id
         self.sessions = {}
         self.intermediate_grades = {}
-        self.final_grades = {}
+        self.final_exams = {}

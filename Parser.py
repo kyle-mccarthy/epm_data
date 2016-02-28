@@ -1,5 +1,6 @@
 from Session import Session
 from Student import Student
+from Exam import Exam
 from os import listdir
 import time
 import pandas as pd
@@ -27,6 +28,7 @@ class Parser:
             for f in listdir(self.path + str(s)):
                 self.parse_session_file(s, f)
         self.parse_intermediate_grades()
+        self.parse_final_grades()
 
     # parse the file and extract the data needed from it, then create the session and attach it to the correct user
     def parse_session_file(self, session, file_name):
@@ -82,5 +84,17 @@ class Parser:
             for i in range(1, 6):
                 self.students[student_id].intermediate_grades[i+1] = row[i]
 
-
-
+    # parse the final grade information and save it for the student
+    def parse_final_grades(self):
+        # there are two pages in the workbook we need to look at the first one is the first exam,
+        # and the second page is the second exam
+        for ex_num in range(0, 2):
+            ex = pd.read_excel('grades/final_grades.xlsx', ex_num, index_col=None, na_values=['NA'])
+            for index, row in ex.iterrows():
+                student_id = int(row[0])
+                # this isn't the cleanest way but what it does is pick the value from the row/col and then it maps it
+                # to the object, there isn't really any reason to assign each row to a variable and then pass it to the
+                # constructor other than readibility, but its a lot to type
+                exam = Exam(ex_num, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
+                            row[11], row[12], row[13], row[14], row[15], row[16], row[17])
+                self.students[student_id].final_exams[ex_num+1] = exam
