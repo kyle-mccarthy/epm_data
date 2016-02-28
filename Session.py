@@ -1,8 +1,8 @@
 class Session:
 
-    def __init__(self, id, exercise, activity, start_time, end_time, idle_time, mouse_wheel, mouse_wheel_click,
+    def __init__(self, session_id, exercise, activity, start_time, end_time, idle_time, mouse_wheel, mouse_wheel_click,
                  mouse_click_left, mouse_click_right, mouse_movement, keystroke):
-        self.id = id
+        self.session_id = session_id
         self.exercise = exercise
         self.activity = activity
         self.start_time = start_time

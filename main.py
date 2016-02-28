@@ -2,7 +2,25 @@ from Parser import Parser
 
 p = Parser()
 p.load()
-averages = p.get_average_session_scores()
-print(averages)
-medians = p.get_median_session_scores()
-print(medians)
+
+# get the intermediate averages
+intm_averages = p.get_average_session_scores()
+print("intermediate averages: " + str(intm_averages))
+
+# get the intermediate medians
+intm_medians = p.get_median_session_scores()
+print("intermediate medians: " + str(intm_medians))
+
+# get the intermediate modes
+intm_modes = p.get_mode_session_scores()
+print("intermediate modes: " + str(intm_modes))
+
+# get the intermediate standard deviations
+intm_std_devs = p.get_std_dev_session_scores()
+print("intermediate std_devs: " + str(intm_std_devs))
+
+fe_scores = p.get_list_exam_scores()
+print(fe_scores)
+
+# export the joined session and intermediate grade data to a CSV
+p.export_joined_session_grade_data()

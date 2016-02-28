@@ -48,14 +48,14 @@ class Parser:
 
             # catch the possibility that the data is malformatted
             try:
-                time.strptime(start_time, "%d.%m.%Y %H:%M:%S")
+                start_time = time.strptime(start_time, "%d.%m.%Y %H:%M:%S")
             except ValueError:
                 print("error converting str to time for session " + str(session_id) + " in file " + file_name +
                       " for the date " + start_time)
 
             # catch the possibility that the data is malformatted
             try:
-                time.strptime(end_time, "%d.%m.%Y %H:%M:%S")
+                end_time = time.strptime(end_time, "%d.%m.%Y %H:%M:%S")
             except ValueError:
                 print("error converting str to time for session " + str(session_id) + " in file " + file_name +
                       " for the date " + end_time)
@@ -100,6 +100,26 @@ class Parser:
                             row[11], row[12], row[13], row[14], row[15], row[16], row[17])
                 self.students[student_id].final_exams[ex_num+1] = exam
 
+    # essentially perform a join on the session data and the intermediate grade data
+    def get_joined_sessions_data_grade_data(self):
+        data = []
+        for student_id, student in self.students.items():
+            for session_id, session in student.sessions.items():
+                row = session.__dict__
+                row['student_id'] = student_id
+                row['grade'] = None
+                if session_id in student.intermediate_grades:
+                    row['grade'] = student.intermediate_grades[session_id]
+                data.append(row)
+        return data
+
+    # export the joined session and intermediate grade data into a single normalized table with the student, session,
+    # and the grade data for that particular session
+    def export_joined_session_grade_data(self):
+        data = self.get_joined_sessions_data_grade_data()
+        frame = pd.DataFrame(data)
+        frame.to_csv('clean_joined_session_intermediate_grade_data.csv')
+
     # get a list of all the intermediate grades from the sessions from the students
     def get_list_session_scores(self):
         # initialize the session score container
@@ -122,4 +142,26 @@ class Parser:
         for session_id, grades in self.get_list_session_scores().items():
             session_medians[session_id] = statistics.median(grades)
         return session_medians
+
+    # get the mode of the session scores/intermediate grades
+    def get_mode_session_scores(self):
+        session_modes = {}
+        for session_id, grades in self.get_list_session_scores().items():
+            session_modes[session_id] = statistics.mode(grades)
+        return session_modes
+
+    # get the standard deviation of the session scores/intermediate grades
+    def get_std_dev_session_scores(self):
+        session_std_dev = {}
+        for session_id, grades in self.get_list_session_scores().items():
+            session_std_dev[session_id] = statistics.pstdev(grades)
+        return session_std_dev
+
+    # get the exam scores as a dictionary
+    def get_list_exam_scores(self):
+        exam_scores = {1: [], 2: []}
+        for student_id, student in self.students.items():
+            for exam_id, exam in student.final_exams.items():
+                exam_scores[exam_id].append(exam.__dict__)
+        return exam_scores
 
