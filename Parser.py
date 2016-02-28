@@ -83,7 +83,7 @@ class Parser:
             student_id = int(row[0])
             # set the intermediate grades for the sessions 2-6 from the intermediate grades file
             for i in range(1, 6):
-                self.students[student_id].intermediate_grades[i+1] = row[i]
+                self.students[student_id].intermediate_grades[i+1] = float(row[i])
 
     # parse the final grade information and save it for the student
     def parse_final_grades(self):
@@ -104,13 +104,26 @@ class Parser:
     def get_joined_sessions_data_grade_data(self):
         data = []
         for student_id, student in self.students.items():
+            student_data = {}
+            # add the session data to the student data
             for session_id, session in student.sessions.items():
-                row = session.__dict__
-                row['student_id'] = student_id
-                row['grade'] = None
-                if session_id in student.intermediate_grades:
-                    row['grade'] = student.intermediate_grades[session_id]
-                data.append(row)
+                session_data = {}
+                session_data = session.__dict__
+                session_data['student_id'] = student_id
+                session_data['grade'] = None
+                student_data[session_id] = session_data
+            # add the intermediate grade data
+            for session_id, grade in student.intermediate_grades.items():
+                # not all students have session data for every single one, so if there isn't data for a particular
+                # student for the session and exception will rise, if this happens we want to create a mock session
+                # that just contains the id and the grade
+                try:
+                    session = student_data[session_id]
+                    session['grade'] = grade
+                except KeyError:
+                    # there wasn't session data for that particular session_id and student_id so mock the session
+                    student_data[session_id] = {'session_id': session_id, 'student_id': student_id, 'grade': grade}
+            data += student_data.values()
         return data
 
     # export the joined session and intermediate grade data into a single normalized table with the student, session,
