@@ -4,6 +4,7 @@ from Exam import Exam
 from os import listdir
 import time
 import pandas as pd
+import statistics
 
 
 class Parser:
@@ -98,3 +99,27 @@ class Parser:
                 exam = Exam(ex_num, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10],
                             row[11], row[12], row[13], row[14], row[15], row[16], row[17])
                 self.students[student_id].final_exams[ex_num+1] = exam
+
+    # get a list of all the intermediate grades from the sessions from the students
+    def get_list_session_scores(self):
+        # initialize the session score container
+        session_scores = {2: [], 3: [], 4: [], 5: [], 6: []}
+        for student_id, student in self.students.items():
+            for session, score in student.intermediate_grades.items():
+                session_scores[session].append(score)
+        return session_scores
+
+    # get the average of the session scores/intermediate grades
+    def get_average_session_scores(self):
+        session_averages = {}
+        for session_id, grades in self.get_list_session_scores().items():
+            session_averages[session_id] = statistics.mean(grades)
+        return session_averages
+
+    # get the median of the session scores/intermediate grades
+    def get_median_session_scores(self):
+        session_medians = {}
+        for session_id, grades in self.get_list_session_scores().items():
+            session_medians[session_id] = statistics.median(grades)
+        return session_medians
+
