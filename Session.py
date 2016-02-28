@@ -14,3 +14,4 @@ class Session:
         self.mouse_click_right = mouse_click_right
         self.mouse_movement = mouse_movement
         self.keystroke = keystroke
+

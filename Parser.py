@@ -2,6 +2,7 @@ from Session import Session
 from Student import Student
 from os import listdir
 import time
+import pandas as pd
 
 
 class Parser:
@@ -25,6 +26,7 @@ class Parser:
             # iterate files
             for f in listdir(self.path + str(s)):
                 self.parse_session_file(s, f)
+        self.parse_intermediate_grades()
 
     # parse the file and extract the data needed from it, then create the session and attach it to the correct user
     def parse_session_file(self, session, file_name):
@@ -69,3 +71,16 @@ class Parser:
 
             # attach the session to the student
             self.students[student_id].sessions[session_id] = session
+
+    # parse the intermediate grades
+    def parse_intermediate_grades(self):
+        # open the intermediate grades file using pandas
+        f = pd.read_excel('grades/intermediate_grades.xlsx', index_col=None, na_values=['NA'])
+        for index, row in f.iterrows():
+            student_id = int(row[0])
+            # set the intermediate grades for the sessions 2-6 from the intermediate grades file
+            for i in range(1, 6):
+                self.students[student_id].intermediate_grades[i+1] = row[i]
+
+
+
