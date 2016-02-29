@@ -1,4 +1,5 @@
 from Session import Session
+from Session import Activity
 from Student import Student
 from Exam import Exam
 from os import listdir
@@ -17,8 +18,12 @@ class Parser:
 
     # initialize the list of students
     def init_students(self):
+        # init the students
         for i in range(1, 116):
             self.students[i] = Student(i)
+            # init the sessions for the students
+            for j in range(1, 7):
+                self.students[i].sessions[j] = Session(j)
 
     # iterate through the sessions file and each session folder and then get the files in the session folder
     # the iterate the files in the session folder
@@ -69,11 +74,11 @@ class Parser:
             keystroke = row[12].lstrip().rstrip()
 
             # create the session
-            session = Session(session_id, exercise, activity, start_time, end_time, idle_time, mouse_wheel,
-                              mouse_wheel_click, mouse_click_left, mouse_click_right, mouse_movement, keystroke)
+            activity = Activity(session_id, exercise, activity, start_time, end_time, idle_time, mouse_wheel,
+                                mouse_wheel_click, mouse_click_left, mouse_click_right, mouse_movement, keystroke)
 
-            # attach the session to the student
-            self.students[student_id].sessions[session_id] = session
+            # attach the session's activity to the student
+            self.students[student_id].sessions[session_id].activities.append(activity)
 
     # parse the intermediate grades
     def parse_intermediate_grades(self):
@@ -100,46 +105,23 @@ class Parser:
                             row[11], row[12], row[13], row[14], row[15], row[16], row[17])
                 self.students[student_id].final_exams[ex_num+1] = exam
 
-    # essentially perform a join on the session data and the intermediate grade data
-    def get_joined_sessions_data_grade_data(self):
-        data = []
+    # essentially join the sessions for all the student and the activities performed by a student for the session
+    # a student may have many activities performed during a session, or they may not have attended at all
+    def get_joined_session_activity(self):
+        activities = []
         for student_id, student in self.students.items():
-            student_data = {}
-            # add the session data to the student data
             for session_id, session in student.sessions.items():
-                session_data = {}
-                session_data = session.__dict__
-                session_data['student_id'] = student_id
-                session_data['intermediate_grade'] = 'n/a'
-                # see how the student did on the question that they are practicing for in the final exam
-                for exam_id, exam in student.final_exams.items():
-                    try:
-                        session_data['exam_' + str(exam_id) + '_exercise_score'] = \
-                            getattr(exam, session_data['exercise'].lower())
-                    except AttributeError:
-                        session_data['exam_' + str(exam_id) + '_exercise_score'] = None
-                student_data[session_id] = session_data
-            # add the intermediate grade data
-            for session_id, grade in student.intermediate_grades.items():
-                # not all students have session data for every single one, so if there isn't data for a particular
-                # student for the session and exception will rise, if this happens we want to create a mock session
-                # that just contains the id and the grade
-                try:
-                    session = student_data[session_id]
-                    session['intermediate_grade'] = grade
-                except KeyError:
-                    # there wasn't session data for that particular session_id and student_id so mock the session
-                    student_data[session_id] = {'session_id': session_id, 'student_id': student_id,
-                                                'intermediate_grade': grade}
-            data += student_data.values()
-        return data
+                for activity in session.activities:
+                    activity_data = activity.__dict__
+                    activity_data["session_id"] = session_id
+                    activity_data["student_id"] = student_id
+                    activities.append(activity_data)
+        return activities
 
-    # export the joined session and intermediate grade data into a single normalized table with the student, session,
-    # and the grade data for that particular session
-    def export_joined_session_grade_data(self):
-        data = self.get_joined_sessions_data_grade_data()
-        frame = pd.DataFrame(data)
-        frame.to_csv('clean_joined_session_intermediate_grade_data.csv')
+    # export the clean, joined session activity data
+    def export_joined_session_activity(self):
+        frame = pd.DataFrame(self.get_joined_session_activity())
+        frame.to_csv('clean_joined_session_activity_data.csv')
 
     # get a list of all the intermediate grades from the sessions from the students
     def get_list_session_scores(self):
