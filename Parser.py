@@ -110,7 +110,14 @@ class Parser:
                 session_data = {}
                 session_data = session.__dict__
                 session_data['student_id'] = student_id
-                session_data['grade'] = None
+                session_data['intermediate_grade'] = 'n/a'
+                # see how the student did on the question that they are practicing for in the final exam
+                for exam_id, exam in student.final_exams.items():
+                    try:
+                        session_data['exam_' + str(exam_id) + '_exercise_score'] = \
+                            getattr(exam, session_data['exercise'].lower())
+                    except AttributeError:
+                        session_data['exam_' + str(exam_id) + '_exercise_score'] = None
                 student_data[session_id] = session_data
             # add the intermediate grade data
             for session_id, grade in student.intermediate_grades.items():
@@ -119,10 +126,11 @@ class Parser:
                 # that just contains the id and the grade
                 try:
                     session = student_data[session_id]
-                    session['grade'] = grade
+                    session['intermediate_grade'] = grade
                 except KeyError:
                     # there wasn't session data for that particular session_id and student_id so mock the session
-                    student_data[session_id] = {'session_id': session_id, 'student_id': student_id, 'grade': grade}
+                    student_data[session_id] = {'session_id': session_id, 'student_id': student_id,
+                                                'intermediate_grade': grade}
             data += student_data.values()
         return data
 
