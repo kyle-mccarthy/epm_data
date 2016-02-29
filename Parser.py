@@ -129,11 +129,14 @@ class Parser:
         for student_id, student in self.students.items():
             grade_data = {'student_id': student_id, 'intermediate_session_2': None, 'intermediate_session_3': None,
                           'intermediate_session_4': None, 'intermediate_session_5': None,
-                          'intermediate_session_6': None, 'ex_1_total': None, 'ex_2_total': None}
+                          'intermediate_session_6': None}
             for session_id, grade in student.intermediate_grades.items():
                 grade_data['intermediate_session_' + str(session_id)] = grade
             for exam_id, exam in student.final_exams.items():
-                grade_data['ex_' + str(exam_id) + "_total"] = exam.total
+                exam_data = exam.__dict__
+                for attr, val in exam_data.items():
+                    if attr != "exam_id":
+                        grade_data['ex_' + str(exam_id) + "_" + attr] = val
             grades.append(grade_data)
         return grades
 
