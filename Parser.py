@@ -123,6 +123,25 @@ class Parser:
         frame = pd.DataFrame(self.get_joined_session_activity())
         frame.to_csv('clean_joined_session_activity_data.csv')
 
+    # get the grades for a student, join the student_id, intermediate grades, and then final exam grades
+    def get_joined_grade_data(self):
+        grades = []
+        for student_id, student in self.students.items():
+            grade_data = {'student_id': student_id, 'intermediate_session_2': None, 'intermediate_session_3': None,
+                          'intermediate_session_4': None, 'intermediate_session_5': None,
+                          'intermediate_session_6': None, 'ex_1_total': None, 'ex_2_total': None}
+            for session_id, grade in student.intermediate_grades.items():
+                grade_data['intermediate_session_' + str(session_id)] = grade
+            for exam_id, exam in student.final_exams.items():
+                grade_data['ex_' + str(exam_id) + "_total"] = exam.total
+            grades.append(grade_data)
+        return grades
+
+    # export the cleaned, joined grade data
+    def export_joined_grades(self):
+        frame = pd.DataFrame(self.get_joined_grade_data())
+        frame.to_csv('clean_joined_grade_data.csv')
+
     # get a list of all the intermediate grades from the sessions from the students
     def get_list_session_scores(self):
         # initialize the session score container
