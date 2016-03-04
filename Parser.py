@@ -112,7 +112,7 @@ class Parser:
         for student_id, student in self.students.items():
             for session_id, session in student.sessions.items():
                 for activity in session.activities:
-                    activity_data = activity.__dict__
+                    activity_data = activity.to_dict()
                     activity_data["session_id"] = session_id
                     activity_data["student_id"] = student_id
                     activities.append(activity_data)

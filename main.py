@@ -36,7 +36,7 @@ exam_std_dev = p.get_std_dev_exam_scores()
 print("exam std dev: " + str(exam_std_dev))
 
 # export the joined session and intermediate grade data to a CSV, this creates 65MB csv file
-# p.export_joined_session_activity()
+p.export_joined_session_activity()
 
 # export the joined grade data to a CSV
 p.export_joined_grades()
