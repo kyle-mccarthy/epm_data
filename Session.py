@@ -29,20 +29,18 @@ class Activity:
         self.clean()
 
     def clean(self):
-        self.start_time = time.mktime(self.start_time)
-        self.end_time = time.mktime(self.end_time)
         if int(self.idle_time) < 0:
             self.idle_time = 0
         if self.start_time is not None and self.end_time is not None:
-            self.elapsed_time = self.end_time - self.start_time
+            self.elapsed_time = time.mktime(self.end_time) - time.mktime(self.start_time)
 
     def to_dict(self):
         return {
             'session_id': self.session_id,
             'exercise': self.exercise,
             'activity': self.activity,
-            'start_time': self.start_time,
-            'end_time': self.end_time,
+            'start_time': time.strftime("%H:%M:%S", self.start_time),
+            'end_time': time.strftime("%H:%M:%S", self.end_time),
             'idle_time': self.idle_time,
             'mouse_wheel': self.mouse_wheel,
             'mouse_wheel_click': self.mouse_wheel_click,
