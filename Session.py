@@ -30,7 +30,7 @@ class Activity:
 
     def clean(self):
         if int(self.idle_time) < 0:
-            self.idle_time = 0
+            self.idle_time = None
         if self.start_time is not None and self.end_time is not None:
             self.elapsed_time = time.mktime(self.end_time) - time.mktime(self.start_time)
 
