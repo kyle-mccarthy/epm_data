@@ -234,7 +234,8 @@ class Parser:
                 'intermediate_avg': student.get_mean_intermediate(),
                 'ex_1_total': student.get_ex_1_score(),
                 'ex_2_total': student.get_ex_2_score(),
-                'best_exam': student.get_best_final_score()
+                'best_exam': student.get_best_final_score(),
+                'best_exam_letter': student.get_best_exam_letter(),
             })
         return profiles
 

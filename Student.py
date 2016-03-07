@@ -37,3 +37,17 @@ class Student:
         if ex_1 > ex_2:
             return ex_1
         return ex_2
+
+    # get the letter grade for the best final exam score
+    def get_best_exam_letter(self):
+        score = self.get_best_final_score()
+        if score >= 90:
+            return 'A'
+        elif score >= 80:
+            return 'B'
+        elif score >= 70:
+            return 'C'
+        elif score >= 60:
+            return 'D'
+        else:
+            return 'F'

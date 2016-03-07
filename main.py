@@ -42,4 +42,4 @@ print("exam std dev: " + str(exam_std_dev))
 # p.export_joined_grades()
 
 # export the student grade profiles to a CSV
-# p.export_student_profiles()
+p.export_student_profiles()
