@@ -225,3 +225,18 @@ class Parser:
         for exam_id, exam in self.get_list_exam_scores().items():
             exam_std_dev[exam_id] = statistics.pstdev([x['total'] for x in exam])
         return exam_std_dev
+
+    def build_student_profiles(self):
+        profiles = []
+        for student_id, student in self.students.items():
+            profiles.append({
+                'student_id': student_id,
+                'intermediate_avg': student.get_mean_intermediate(),
+                'ex_1_total': student.get_ex_1_score(),
+                'ex_2_total': student.get_ex_2_score(),
+                'best_exam': student.get_best_final_score()
+            })
+        return profiles
+
+    def export_student_profiles(self):
+        pd.DataFrame(self.build_student_profiles()).to_csv('student_grade_profiles.csv')

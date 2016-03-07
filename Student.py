@@ -17,19 +17,20 @@ class Student:
             total_score += score
         return total_score/5
 
-    # quick getter for accessing the exam 1 score
+    # quick getter for accessing the exam 1 score, if the student didn't take the exam the value -1 will be returned
     def get_ex_1_score(self):
         if 1 in self.final_exams:
             return self.final_exams[1].total
         return -1
 
-    # quick getter for accessing the exam 2 score
+    # quick getter for accessing the exam 2 score, if the student didn't take the exam the value -1 will be returned
     def get_ex_2_score(self):
         if 2 in self.final_exams:
             return self.final_exams[2].total
         return -1
 
-    # quick getter for accesing the best of the exam scores
+    # quick getter for accessing the best of the exam scores, if the value -1 is returned that indicates that their
+    # first and second exam scores were both non existent indicating that they did not finish the class
     def get_best_final_score(self):
         ex_1 = self.get_ex_1_score()
         ex_2 = self.get_ex_2_score()
