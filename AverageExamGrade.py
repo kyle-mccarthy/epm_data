@@ -8,6 +8,10 @@ outputDf = df.copy(deep=True)
 outputGrades = []
 averageExamScore = []
 letterGrades = []
+bestExamScore = []
+num41 = []
+num61 = []
+num62 = []
 
 for index, row in outputDf.iterrows():
     # Variables
@@ -27,7 +31,7 @@ for index, row in outputDf.iterrows():
     if sessionsAttended != 0:
         outputGrades.append(float(averageIntermediateGrade/sessionsAttended))
     else:
-        outputGrades.append(None)
+        outputGrades.append(-1) #change back to None
 
     examList = ['ex_1_total', 'ex_2_total']
     for exam in examList:
@@ -50,14 +54,39 @@ for index, row in outputDf.iterrows():
         else:
             letterGrades.append("F")
     else:
-        averageExamScore.append(None)
-        letterGrades.append(None)
+        averageExamScore.append(-1) #None
+        letterGrades.append(-1) #None
+    if row['ex_1_total'] > row['ex_2_total']:
+        bestExamScore.append(row['ex_1_total'])
+    elif row['ex_1_total'] <= row['ex_2_total']:
+        bestExamScore.append(row['ex_2_total'])
+    elif m.isnan(row['ex_2_total']):
+        bestExamScore.append(row['ex_1_total'])
+    elif m.isnan(row['ex_1_total']):
+        bestExamScore.append(row['ex_2_total'])
+    else:
+        bestExamScore.append(-1) #none
+    if m.isnan(row['ex_2_es_4_1']):
+        num41.append(-1)
+    else:
+        num41.append(row['ex_2_es_4_1'])
+    if m.isnan(row['ex_2_es_6_1']):
+        num61.append(-1)
+    else:
+        num61.append(row['ex_2_es_6_1'])
+    if m.isnan(row['ex_2_es_6_2']):
+        num62.append(-1)
+    else:
+        num62.append(row['ex_2_es_6_2'])
 
-
+outputDf['ex_2_es_4_1'] = num41
+outputDf['ex_2_es_6_1'] = num61
+outputDf['ex_2_es_6_2'] = num62
+outputDf['bestExamScore'] = bestExamScore
 outputDf['letterGrade'] = letterGrades
 outputDf['averageIntermediateScore'] = outputGrades
 outputDf['averageExamScore'] = averageExamScore
 for index, row in outputDf.iterrows():
-    print(index, row['averageIntermediateScore'], row['averageExamScore'])
+    print(index, row['ex_2_es_6_1'], row['ex_2_es_6_2'], row['ex_2_es_4_1'])
 
 outputDf.to_csv('average_exam_grades_by_intermediate_scores.csv')
